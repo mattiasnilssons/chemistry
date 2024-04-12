@@ -4,7 +4,7 @@ services:
   backend:
     build: .
     ports:
-      - 8000:8000
+      - 8080:8080
     env_file:
       - .env.example
 
@@ -14,7 +14,7 @@ services:
       dockerfile: src/chemistry_calculator_portal/Dockerfile
       args:
         VITE_WEBSITE_HOST: http://localhost:3000
-        VITE_BACKEND_HOST: http://localhost:8000
+        VITE_BACKEND_HOST: http://localhost:8080
     ports:
       - 3000:3000
     environment:

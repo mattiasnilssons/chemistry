@@ -8,7 +8,7 @@
   let riskFactor = writable(20); // Default value for the slider
 
   async function fetchMoldData() {
-    const response = await fetch('http://localhost:8000/calculate-mould', {
+    const response = await fetch('http://localhost:8080/calculate-mould', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     });
