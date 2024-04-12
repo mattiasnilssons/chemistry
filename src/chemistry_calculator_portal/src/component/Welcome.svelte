@@ -14,7 +14,7 @@
   }
 
   .header {
-    background-color: darkolivegreen; /* Primary Color */
+    background-color: #1f5b83; /* Primary Color */
     color: #ffffff; /* White text for contrast */
     padding: 1rem; /* More padding for a spacious header */
     border-radius: 5px 5px 0 0; /* Continue the border radius on the top of the header */
@@ -31,35 +31,28 @@
   </div>
 
   <section>
-    <div class="lead"><Trans text="This tool is designed to provide you with an estimate of how the HeatBooster technology will perform in various applications."/></div>
+    <div class="lead"><Trans text="Här har du möjligheten att djupdyka i mina klimatdata och se hur de speglar dina förväntningar."/></div>
   <p></p>
   <div class="tagline">
-    <div class="fw-bold"><Trans text="Heat Source"/></div>
+    <div class="fw-bold"><Trans text="Översikt"/></div>
     <div class="form-text">
-    <Trans text="Identify 'Waste Heat' or 'Process Cooling' at your facility. Specify the medium (e.g., Water) and temperatures. In the absence of exact Outlet Temperature data, outlet temperatures will be automatically estimated."/>
+    <Trans text="På min översiktssida dras paralleller mellan klimatkurvor och dagboksanteckningar. Är förväntningarna på hur relativ fuktighet (RH) och temperatur (T) skulle förändras i linje med det dataloggern samlade in?"/>
     </div>
   </div>
 
     <div class="tagline">
-      <div class="fw-bold"><Trans text="Heat Sink"/></div>
+      <div class="fw-bold"><Trans text="Mögelrisk"/></div>
       <div class="form-text">
-      <Trans text="Designate 'Useful Heat' or 'Process Heat'. Specify the medium (e.g., Steam) and temperatures. In the absence of exact Inlet Temperature data, inlet temperatures will be automatically estimated."/>
+      <Trans text="Utforska 'Mögelrisk' för att se diagram som visualiserar hur mina mätvärden står sig mot etablerade gränsvärden. Få en klar bild av riskzonen där mögeltillväxt kan bli ett problem."/>
       </div>
       </div>
 
     <div class="tagline">
-      <div class="fw-bold"><Trans text="Heat Pump Details"/></div>
+      <div class="fw-bold"><Trans text="Vattenmängd"/></div>
       <div class="form-text">
-      <Trans text="Select your Heat Pump model. The HBL4 unit offers a production capacity of up to 2.0 MW, while the HBL16 unit can deliver as much as 8.0 MW. These units operate efficiently within an RPM range of 450 to 1500. All refrigerants have GWP less than 10."/>
+      <Trans text="Missa inte sidan om 'Vattenmängd' som illustrerar mängden vattenånga i luften – ett viktigt verktyg för att förstå klimat på en molekylär nivå."/>
       </div>
     </div>
-
-    <div class="tagline">
-      <div class="fw-bold"><Trans text="Project Configuration"/></div>
-      <div class="form-text">
-      <Trans text="Specify the number of Heat Pumps required. For large temperature lifts (about 70°C), 2-stage units may be necessary."/>
-      </div>
-    </div>
-
+  <img src="gu.png" alt="Gothenburg University" id="gu-image">
   </section>
 </div>
