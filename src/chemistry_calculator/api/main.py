@@ -25,7 +25,7 @@ async def calculate_mould():
     return results
 
 app.include_router(router)
-# portname = int(os.getenv("APP_PORT"))
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run("main:app", host="0.0.0.0", port=portname, reload=True)
+if __name__ == "__main__":
+    portname = int(os.getenv("APP_PORT"))
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=portname, reload=True)
