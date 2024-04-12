@@ -1,32 +1,46 @@
-# Build stage for compiling the frontend assets
+# Use a specific version of node as the base image for the builder stage
 FROM node:18 as builder
+
+# Set working directory to ensure that all paths in subsequent commands are relative to this location
+WORKDIR /app
+
+# Set environment variables
+ARG VITE_WEBSITE_HOST
+ENV VITE_WEBSITE_HOST=$VITE_WEBSITE_HOST
+
+ARG VITE_BACKEND_HOST
+ENV VITE_BACKEND_HOST=$VITE_BACKEND_HOST
+
+ARG VITE_FIREBASE_API_KEY
+ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
+
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
+
+# Copy package.json and package-lock.json for npm install
+COPY src/chemistry_calculator_portal/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of your frontend codebase into the image
+COPY src/chemistry_calculator_portal/ .
+
+# Build the project (assuming a script named 'build' exists in package.json)
+RUN npm run build
+
+# Use a smaller node image for the runtime
+FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package management files to the working directory
-COPY src/chemistry_calculator_portal/package.json src/chemistry_calculator_portal/package-lock.json ./
+# Copy the build directory from the builder stage to the production image
+COPY --from=builder /app/build /app
 
-# Install project dependencies
-RUN npm install
+# Set environment variables for the runtime
+ARG ORIGIN
+ENV ORIGIN=$VITE_WEBSITE_HOST
 
-# Copy the rest of the frontend codebase into the image
-COPY src/chemistry_calculator_portal .
-
-# Build the project
-RUN npm run build
-
-# Production image, copy all the files and run nginx
-FROM nginx:stable-alpine
-
-# Set working directory to nginx asset directory
-WORKDIR /usr/share/nginx/html
-
-# Remove default nginx static assets
-RUN rm -rf ./*
-
-# Copy static assets from builder stage
-COPY --from=builder /app/build .
-
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# Start the application
+CMD ["node", "index.js"]
