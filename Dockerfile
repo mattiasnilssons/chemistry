@@ -44,4 +44,4 @@ COPY src /app
 # Switch to the non-privileged user to run the application.
 USER appuser
 
-CMD ["uvicorn", "chemistry_calculator.api.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "chemistry_calculator.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,5 +1,4 @@
 FROM node:18 as builder
-LABEL authors="Mattias"
 
 ARG VITE_WEBSITE_HOST
 ENV VITE_WEBSITE_HOST=$VITE_WEBSITE_HOST
@@ -13,7 +12,7 @@ ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
 ARG VITE_FIREBASE_AUTH_DOMAIN
 ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
 
-COPY package.json src/chemistry_calculator_portal/package-lock.json /tmp/
+COPY src/chemistry_calculator_portal/package.json src/chemistry_calculator_portal/package-lock.json /tmp/
 RUN cd /tmp \
     && npm install
 
