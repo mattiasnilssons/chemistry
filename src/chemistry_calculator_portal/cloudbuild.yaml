@@ -1,0 +1,61 @@
+substitutions:
+  _REGION: europe-west4
+  _GCR_HOST: eu.gcr.io
+
+timeout: 1200s
+
+steps:
+  # Signal cloud build start
+  # https://cloud.google.com/sdk/gcloud/reference/logging/write
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    id: 'log-build-start'
+    args:
+      - 'logging'
+      - 'write'
+      - 'build'
+      - '{"state": "started", "project_id": "$PROJECT_ID", "build_id": "$BUILD_ID", "branch_name": "$BRANCH_NAME", "tag_name": "$TAG_NAME", "repo_name": "$REPO_NAME", "short_sha": "$SHORT_SHA", "commit_sha": "$COMMIT_SHA"}'
+      - '--payload-type=json'
+
+  # Build & push docker chemistry-calculator-portal container image
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    id: 'build-chemistry-calculator-portal-service'
+    args:
+      - '--dockerfile=src/chemistry_calculator_portal/Dockerfile'
+      - '--destination=$_GCR_HOST/$PROJECT_ID/$REPO_NAME-chemistry-calculator-portal:latest'
+      - '--destination=$_GCR_HOST/$PROJECT_ID/$REPO_NAME-chemistry-calculator-portal:$SHORT_SHA'
+      - '--cache=true'
+      - '--cache-ttl=6h'
+      - '--build-arg=VITE_WEBSITE_HOST=$_VITE_WEBSITE_HOST'
+      - '--build-arg=VITE_BACKEND_HOST=$_VITE_BACKEND_HOST'
+      - '--build-arg=VITE_FIREBASE_API_KEY=$_VITE_FIREBASE_API_KEY'
+      - '--build-arg=VITE_FIREBASE_AUTH_DOMAIN=$_VITE_FIREBASE_AUTH_DOMAIN'
+
+  # Deploy chemistry-calculator-portal to Cloud Run
+  # https://cloud.google.com/sdk/gcloud/reference/run/deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    id: 'deploy-chemistry-calculator-portal-cloud-run'
+    waitFor:
+      - 'build-chemistry-calculator-portal-service'
+    args:
+      - 'run'
+      - 'services'
+      - 'update'
+      - '$REPO_NAME-chemistry-calculator-portal'
+      - '--platform=managed'
+      - '--region=$_REGION'
+      - '--image=$_GCR_HOST/$PROJECT_ID/$REPO_NAME-chemistry-calculator-portal:$SHORT_SHA'
+      - '--port=80'
+
+  # Signal cloud build finished
+  # https://cloud.google.com/sdk/gcloud/reference/logging/write
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    id: 'log-build-end'
+    args:
+      - 'logging'
+      - 'write'
+      - 'build'
+      - '{"state": "finished", "project_id": "$PROJECT_ID", "build_id": "$BUILD_ID", "branch_name": "$BRANCH_NAME", "tag_name": "$TAG_NAME", "repo_name": "$REPO_NAME", "short_sha": "$SHORT_SHA", "commit_sha": "$COMMIT_SHA"}'
+      - '--payload-type=json'
