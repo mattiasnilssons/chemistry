@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM tiangolo/uvicorn-gunicorn:python3.11-slim as builder
+FROM tiangolo/uvicorn-gunicorn:python3.12-slim as builder
 
 # Set the working directory in the builder stage
 WORKDIR /app
@@ -15,13 +15,13 @@ RUN poetry config virtualenvs.create false \
     && poetry install --no-dev --no-interaction --no-ansi
 
 # Use a second stage to minimize the final image size
-FROM tiangolo/uvicorn-gunicorn:python3.11-slim
+FROM tiangolo/uvicorn-gunicorn:python3.12-slim
 
 # Prevent Python from writing pyc files to disc and buffering stdout and stderr
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
 # Copy installed packages from builder to the final image
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # Create a non-privileged user to run the application
 RUN useradd --create-home appuser
