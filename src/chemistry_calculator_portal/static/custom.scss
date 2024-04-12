@@ -1,0 +1,30 @@
+.label:first-letter {
+  text-transform: capitalize;
+}
+
+/* Styles for the cookie banner */
+#cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  z-index: 1000;
+}
+#cookie-policy-link {
+  color: red;
+}
+#close-banner {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  outline: none;
+}
