@@ -49,8 +49,6 @@ steps:
 - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
   entrypoint: "bash"
   id: "create-firestore-indexes"
-  args:
-  - "-c"
 # Signal cloud build finished
 # https://cloud.google.com/sdk/gcloud/reference/logging/write
 - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
