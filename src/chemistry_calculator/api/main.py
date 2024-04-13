@@ -10,7 +10,10 @@ load_dotenv()  # This loads the .env file
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("VITE_WEBSITE_HOST"),
+    allow_origins=[os.getenv("VITE_WEBSITE_HOST"),
+                   "https://chemistry-chemistry-calculator-portal-xopabutmga-ez.a.run.app",
+                   "https://chemistry-xopabutmga-ez.a.run.app",
+                   "ALLOW_ORIGINS", ""],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
