@@ -28,6 +28,8 @@ steps:
       - '--cache-ttl=6h'
       - '--build-arg=VITE_WEBSITE_HOST=$_VITE_WEBSITE_HOST'
       - '--build-arg=VITE_BACKEND_HOST=$_VITE_BACKEND_HOST'
+      - '--build-arg=VITE_FIREBASE_API_KEY=$_VITE_FIREBASE_API_KEY'
+      - '--build-arg=VITE_FIREBASE_AUTH_DOMAIN=$_VITE_FIREBASE_AUTH_DOMAIN'
 
   # Deploy chemistry-calculator-portal to Cloud Run
   # https://cloud.google.com/sdk/gcloud/reference/run/deploy
