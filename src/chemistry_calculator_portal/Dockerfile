@@ -1,5 +1,5 @@
 # Use a specific version of node as the base image for the builder stage
-FROM node:21 as builder
+FROM node:18 as builder
 
 # Set working directory to ensure that all paths in subsequent commands are relative to this location
 WORKDIR /app
