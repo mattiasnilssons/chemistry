@@ -3,7 +3,9 @@ import os
 
 def get_mould_data():
     print("Current working directory:", os.getcwd())
-    df = pd.read_excel('/Users/Mattias/Workspaces/personal/chemistry/src/chemistry_calculator/temp_rh_time.xlsx', header=1)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    pathname = os.path.join(BASE_DIR, 'temp_rh_time.xlsx')
+    df = pd.read_excel(pathname, header=1)
     df['Unit'] = pd.to_datetime(df['Unit'])
     df['dates'] = df['Unit']
     df["temperatures"] = df['°C']
