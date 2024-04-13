@@ -29,9 +29,6 @@ COPY src/chemistry_calculator_portal/ .
 # Build the project (assuming a script named 'build' exists in package.json)
 RUN npm run build
 
-# Use a smaller node image for the runtime
-FROM node:18-alpine
-
 # Set the working directory
 WORKDIR /app
 
