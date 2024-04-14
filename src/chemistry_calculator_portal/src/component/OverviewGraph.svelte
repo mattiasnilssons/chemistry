@@ -5,7 +5,7 @@
   import 'chartjs-adapter-date-fns';
   const apiUrl = import.meta.env.VITE_BACKEND_HOST;
   Chart.register(annotationPlugin);
-
+  let selectedEventIndex = writable(-1);
   let chart;
   let chartContainer;
   let climateData = writable({});
@@ -58,12 +58,12 @@ const events = [
     const temperatures = Object.values(data.temperatures);
     const humidity = Object.values(data.humidity);
 
-    const eventAnnotations = events.map(event => ({
+    const eventAnnotations = events.map((event, index) => ({
       type: 'line',
       mode: 'vertical',
       scaleID: 'x',
       value: new Date(event.time),
-      borderColor: 'orange',
+      borderColor: get(selectedEventIndex) === index ? 'red' : 'orange',
       borderWidth: 2,
       label: {
         enabled: true,
@@ -117,11 +117,20 @@ const events = [
       });
     }
   }
+  function selectEvent(index) {
+    selectedEventIndex.set(index);
+    updateChart();
+  }
 </script>
-
 <div class="container">
   <div class="main-content">
     <button on:click={fetchMoldData}>Hämta klimatdata</button>
+    <ul>
+      {#each events as event, index}
+        <li on:click={() => selectEvent(index)}>{event.description}</li>
+      {/each}
+    </ul>
     <canvas bind:this={chartContainer}></canvas>
   </div>
 </div>
+
