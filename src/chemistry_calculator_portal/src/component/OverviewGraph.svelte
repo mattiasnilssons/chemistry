@@ -11,10 +11,10 @@
   let climateData = writable({});
 
   const events = [
-    { time: '2019-03-26T12:00', description: 'I klassrummet (labbsalen) ligger på bänken' },
-    { time: '2019-03-26T19:00', description: 'Transport (i väska)' },
+    { time: '2024-03-26T12:00', description: 'I klassrummet (labbsalen) ligger på bänken' },
+    { time: '2024-03-26T19:00', description: 'Transport (i väska)' },
     // Add all other events following the same format
-    { time: '2019-04-11T09:55', description: 'Ställd i klassrummet' }
+    { time: '2024-04-11T09:55', description: 'Ställd i klassrummet' }
   ];
 
   async function fetchMoldData() {
@@ -24,6 +24,7 @@
     });
     if (response.ok) {
       const data = await response.json();
+      console.log("Data",data)
       climateData.set(data);
       updateChart();
     } else {
@@ -42,16 +43,19 @@
       return;
     }
 
-    const dates = Object.keys(data.temperatures);
-    const temperatures = Object.values(data.temperatures);
-    const humidity = Object.values(data.humidity);
+    // Ensure dates are properly converted and formatted
+    const dates = Object.keys(data.temperatures).map(date => new Date(date));
+    const temperatures = Object.values(data.temperatures).map(temp => temp || 0);  // Fallback for undefined values
+    const humidity = Object.values(data.humidity).map(hum => hum || 0);  // Fallback for undefined values
+
     const moldRisks = humidity.map((rh, index) => calculateMoldRisk(rh, temperatures[index]));
 
+    // Adjust event annotations and ensure valid date formatting
     const eventAnnotations = events.map(event => ({
       type: 'line',
       mode: 'vertical',
       scaleID: 'x',
-      value: event.time,
+      value: new Date(event.time),
       borderColor: 'orange',
       borderWidth: 2,
       label: {
@@ -69,6 +73,7 @@
       chart.options.plugins.annotation.annotations = eventAnnotations;
       chart.update();
     } else {
+      Chart.register(annotationPlugin);
       chart = new Chart(chartContainer, {
         type: 'line',
         data: {
@@ -88,11 +93,9 @@
             x: {
               type: 'time',
               time: {
-                parser: 'yyyy-MM-ddTHH:mm', // Specify the date format here, matching your data
-                unit: 'day',
-                displayFormats: {
-                  day: 'yyyy-MM-dd'
-                }
+                parser: date => new Date(date),  // Use a custom parser to handle date conversion
+                tooltipFormat: 'yyyy-MM-dd HH:mm',
+                unit: 'day'
               },
               position: 'bottom'
             },
@@ -108,7 +111,8 @@
         }
       });
     }
-  }
+}
+
 </script>
 
 <div class="container">
