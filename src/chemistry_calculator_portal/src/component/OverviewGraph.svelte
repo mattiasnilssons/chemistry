@@ -5,11 +5,14 @@
   import 'chartjs-adapter-date-fns';
 
   const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/";
+      // "https://chemistry-xopabutmga-ez.a.run.app/";
   Chart.register(annotationPlugin);
 
   let chart;
   let chartContainer;
   let climateData = writable({});
+  let loading = writable(false);
+  let error = writable('');
   let selectedEventIndex = writable(-1);
 
   const events = [
@@ -25,6 +28,7 @@
     { time: '2024-03-31T13:10', description: 'Flyg till Berlin' },
     { time: '2024-04-04T07:20', description: 'Flyg till Munchen' },
     { time: '2024-04-04T09:15', description: 'Flyg till Göteborg' },
+    { time: '2024-04-04T16:54', description: 'Tåg till Uppsala' },
     { time: '2024-04-07T18:30', description: 'Svettiga springkläder lagda i samma fack som transponder' },
     { time: '2024-04-08T17:52', description: 'Ställd på ett bord i Linne-hostel' },
     { time: '2024-04-11T08:40', description: 'Transport till GU' },
@@ -32,16 +36,24 @@
   ];
 
   async function fetchMoldData() {
-    const response = await fetch(`${apiUrl}/calculate-mould`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      climateData.set(data);
-      updateChart();
-    } else {
-      console.error('Failed to fetch data:', await response.text());
+    loading.set(true);
+    error.set('');
+    try {
+      const response = await fetch(`${apiUrl}/calculate-mould`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+      });
+      if (response.ok) {
+        const data = await response.json();
+        climateData.set(data);
+        updateChart();
+      } else {
+        throw new Error('Failed to fetch mold data: ' + response.status);
+      }
+    } catch (e) {
+      error.set(e.message);
+    } finally {
+      loading.set(false);
     }
   }
 
@@ -62,7 +74,7 @@
       mode: 'vertical',
       scaleID: 'x',
       value: new Date(event.time),
-      borderColor: currentIndex === index ? 'red' : 'orange',
+      borderColor: currentIndex === index ? 'black' : 'orange',
       borderWidth: currentIndex === index ? 4 : 2,
       label: {
         enabled: true,
@@ -124,7 +136,7 @@
 
 <style>
   li.selected {
-    color: red;
+    color: black;
     font-weight: bold;
   }
 </style>
@@ -132,7 +144,7 @@
   <div class="main-content">
     <div class="row">
       <div class="col-2">
-    <button on:click={fetchMoldData}>Hämta klimatdata</button>
+      <button class="btn btn-outline-primary" on:click={fetchMoldData}>Hämta klimatdata</button>
     <ul>
       {#each events as event, index}
         <div class="form-text"><li class:selected={index === $selectedEventIndex} on:click={() => selectEvent(index)}>{event.description}</li></div>

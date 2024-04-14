@@ -6,8 +6,11 @@
   let chart;
   let chartContainer;
   let climateData = writable({});
+  let loading = writable(false);
+  let error = writable('');
   let riskFactor = writable(75); // Default value for the slider
-  const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/";
+  const apiUrl = import.meta.env.VITE_BACKEND_HOST; // e.g., "https://chemistry-xopabutmga-ez.a.run.app/";
+
   const humidityLevels = {
     'Låg': {
       description: 'Under 60% RH: Idealisk för att förhindra alla former av mögeltillväxt.',
@@ -44,17 +47,24 @@
   }
 
   async function fetchMoldData() {
-    console.log("apiUrl",apiUrl)
+    loading.set(true);
+    error.set('');
+    try {
       const response = await fetch(`${apiUrl}/calculate-mould`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'}
-    });
-    if (response.ok) {
-      const data = await response.json();
-      climateData.set(data);
-      updateChart();
-    } else {
-      console.error('Failed to fetch data:', await response.text());
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+      });
+      if (response.ok) {
+        const data = await response.json();
+        climateData.set(data);
+        updateChart();
+      } else {
+        throw new Error('Failed to fetch mold data: ' + response.status);
+      }
+    } catch (e) {
+      error.set(e.message);
+    } finally {
+      loading.set(false);
     }
   }
 
