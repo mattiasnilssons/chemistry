@@ -44,7 +44,8 @@
   }
 
   async function fetchMoldData() {
-    const response = await fetch(`${apiUrl}/calculate-mould`, {
+    console.log("apiUrl",apiUrl)
+      const response = await fetch(`${apiUrl}/calculate-mould`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     });

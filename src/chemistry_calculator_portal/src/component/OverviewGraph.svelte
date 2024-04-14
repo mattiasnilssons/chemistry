@@ -1,17 +1,18 @@
 <script>
   import Chart from 'chart.js/auto';
-  import { writable, get } from "svelte/store";
+  import { writable, get } from 'svelte/store';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import 'chartjs-adapter-date-fns';
+
   const apiUrl = import.meta.env.VITE_BACKEND_HOST;
   Chart.register(annotationPlugin);
-  let selectedEventIndex = writable(-1);
+
   let chart;
   let chartContainer;
   let climateData = writable({});
+  let selectedEventIndex = writable(-1);
 
-  // Define the events for annotations
-const events = [
+  const events = [
     { time: '2024-03-26T12:00', description: 'I klassrummet (labbsalen) ligger på bänken' },
     { time: '2024-03-26T19:00', description: 'Transport (i väska)' },
     { time: '2024-03-26T20:30', description: 'Hotellrum' },
@@ -37,8 +38,6 @@ const events = [
     });
     if (response.ok) {
       const data = await response.json();
-      console.log("Raw dates:", data.Unit);
-
       climateData.set(data);
       updateChart();
     } else {
@@ -48,7 +47,6 @@ const events = [
 
   function updateChart() {
     const data = get(climateData);
-    console.log("Data",data)
     if (!data || !data.Unit || !data.humidity) {
       console.error('Invalid or no data available');
       return;
@@ -57,14 +55,15 @@ const events = [
     const dates = Object.values(data.Unit).map(date => new Date(date));
     const temperatures = Object.values(data.temperatures);
     const humidity = Object.values(data.humidity);
+    const currentIndex = get(selectedEventIndex);
 
     const eventAnnotations = events.map((event, index) => ({
       type: 'line',
       mode: 'vertical',
       scaleID: 'x',
       value: new Date(event.time),
-      borderColor: get(selectedEventIndex) === index ? 'red' : 'orange',
-      borderWidth: 2,
+      borderColor: currentIndex === index ? 'red' : 'orange',
+      borderWidth: currentIndex === index ? 4 : 2,
       label: {
         enabled: true,
         content: event.description,
@@ -80,7 +79,6 @@ const events = [
       chart.options.plugins.annotation.annotations = eventAnnotations;
       chart.update();
     } else {
-      Chart.register(annotationPlugin);
       chart = new Chart(chartContainer, {
         type: 'line',
         data: {
@@ -117,20 +115,32 @@ const events = [
       });
     }
   }
+
   function selectEvent(index) {
     selectedEventIndex.set(index);
     updateChart();
   }
 </script>
-<div class="container">
+
+<style>
+  li.selected {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+
   <div class="main-content">
+    <div class="row">
+      <div class="col-2">
     <button on:click={fetchMoldData}>Hämta klimatdata</button>
     <ul>
       {#each events as event, index}
-        <li on:click={() => selectEvent(index)}>{event.description}</li>
+        <div class="form-text"><li class:selected={index === $selectedEventIndex} on:click={() => selectEvent(index)}>{event.description}</li></div>
       {/each}
     </ul>
+        </div>
+      <div class="col-9">
     <canvas bind:this={chartContainer}></canvas>
+        </div>
+      </div>
   </div>
-</div>
-
