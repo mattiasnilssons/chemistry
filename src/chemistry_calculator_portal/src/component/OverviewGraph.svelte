@@ -11,9 +11,22 @@
   let climateData = writable({});
 
   // Define the events for annotations
-  const events = [
+const events = [
     { time: '2024-03-26T12:00', description: 'I klassrummet (labbsalen) ligger på bänken' },
     { time: '2024-03-26T19:00', description: 'Transport (i väska)' },
+    { time: '2024-03-26T20:30', description: 'Hotellrum' },
+    { time: '2024-03-27T08:30', description: 'Dusch' },
+    { time: '2024-03-27T10:20', description: 'Transport (i väska)' },
+    { time: '2024-03-27T11:00', description: 'Förvaring i skåp (i väska)' },
+    { time: '2024-03-27T16:00', description: 'Transport (i väska)' },
+    { time: '2024-03-27T23:20', description: 'Ställd i ett rum i Uppsala' },
+    { time: '2024-03-30T10:18', description: 'Ställd i ett badrum' },
+    { time: '2024-03-31T13:10', description: 'Flyg till Berlin' },
+    { time: '2024-04-04T07:20', description: 'Flyg till Munchen' },
+    { time: '2024-04-04T09:15', description: 'Flyg till Göteborg' },
+    { time: '2024-04-07T18:30', description: 'Svettiga springkläder lagda i samma fack som transponder' },
+    { time: '2024-04-08T17:52', description: 'Ställd på ett bord i Linne-hostel' },
+    { time: '2024-04-11T08:40', description: 'Transport till GU' },
     { time: '2024-04-11T09:55', description: 'Ställd i klassrummet' }
   ];
 
@@ -24,6 +37,8 @@
     });
     if (response.ok) {
       const data = await response.json();
+      console.log("Raw dates:", data.Unit);
+
       climateData.set(data);
       updateChart();
     } else {
@@ -34,12 +49,12 @@
   function updateChart() {
     const data = get(climateData);
     console.log("Data",data)
-    if (!data || !data.temperatures || !data.humidity) {
+    if (!data || !data.Unit || !data.humidity) {
       console.error('Invalid or no data available');
       return;
     }
 
-    const dates = Object.keys(data.temperatures).map(date => new Date(date));
+    const dates = Object.values(data.Unit).map(date => new Date(date));
     const temperatures = Object.values(data.temperatures);
     const humidity = Object.values(data.humidity);
 
@@ -65,6 +80,7 @@
       chart.options.plugins.annotation.annotations = eventAnnotations;
       chart.update();
     } else {
+      Chart.register(annotationPlugin);
       chart = new Chart(chartContainer, {
         type: 'line',
         data: {
@@ -84,8 +100,6 @@
             x: {
               type: 'time',
               time: {
-                parser: 'yyyy-MM-ddTHH:mm', // Ensure this matches your date input format
-                tooltipFormat: 'yyyy-MM-dd HH:mm',
                 unit: 'day'
               },
               position: 'bottom'
