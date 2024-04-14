@@ -12,7 +12,7 @@ export const menuItems: Array<MenuItem> = [
   } as MenuItem,
   {
     name: 'Mögelrisk',
-    link: '/mould_risk',
+    link: '/mold_risk',
     icon: 'bi-graph-up-arrow'
   } as MenuItem,
   {
