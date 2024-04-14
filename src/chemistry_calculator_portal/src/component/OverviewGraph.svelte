@@ -11,8 +11,7 @@
   let chart;
   let chartContainer;
   let climateData = writable({});
-  let loading = writable(false);
-  let error = writable('');
+  let showAnnotations = writable(true); // Store to control the display of annotations
   let selectedEventIndex = writable(-1);
 
   const events = [
@@ -36,8 +35,6 @@
   ];
 
   async function fetchMoldData() {
-    loading.set(true);
-    error.set('');
     try {
       const response = await fetch(`${apiUrl}/calculate-mould`, {
         method: 'POST',
@@ -48,28 +45,22 @@
         climateData.set(data);
         updateChart();
       } else {
-        throw new Error('Failed to fetch mold data: ' + response.status);
+        console.error('Failed to fetch mold data:', response.statusText);
       }
-    } catch (e) {
-      error.set(e.message);
-    } finally {
-      loading.set(false);
+    } catch (error) {
+      console.error('Network or other error:', error.message);
     }
   }
 
   function updateChart() {
     const data = get(climateData);
-    if (!data || !data.Unit || !data.humidity) {
-      console.error('Invalid or no data available');
-      return;
-    }
-
+    const showAnnot = get(showAnnotations);
     const dates = Object.values(data.Unit).map(date => new Date(date));
     const temperatures = Object.values(data.temperatures);
     const humidity = Object.values(data.humidity);
     const currentIndex = get(selectedEventIndex);
 
-    const eventAnnotations = events.map((event, index) => ({
+    const eventAnnotations = showAnnot ? events.map((event, index) => ({
       type: 'line',
       mode: 'vertical',
       scaleID: 'x',
@@ -82,7 +73,7 @@
         backgroundColor: 'rgba(255, 204, 0, 0.8)',
         position: "top"
       }
-    }));
+    })) : [];
 
     if (chart) {
       chart.data.labels = dates;
@@ -128,23 +119,22 @@
     }
   }
 
+  function toggleAnnotations() {
+    showAnnotations.update(n => !n);
+    updateChart();
+  }
+
   function selectEvent(index) {
     selectedEventIndex.set(index);
     updateChart();
   }
 </script>
 
-<style>
-  li.selected {
-    color: black;
-    font-weight: bold;
-  }
-</style>
-
   <div class="main-content">
     <div class="row">
       <div class="col-2">
-      <button class="btn btn-outline-primary" on:click={fetchMoldData}>Hämta klimatdata</button>
+    <button class="btn btn-outline-primary" on:click={fetchMoldData}>Hämta klimatdata</button>
+    <button class="btn btn-outline-primary" on:click={toggleAnnotations}>Göm annoteringar</button>
     <ul>
       {#each events as event, index}
         <div class="form-text"><li class:selected={index === $selectedEventIndex} on:click={() => selectEvent(index)}>{event.description}</li></div>
