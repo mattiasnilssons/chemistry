@@ -14,6 +14,7 @@ def get_mould_data():
     df['dates'] = df['Unit']
     df["temperatures"] = df['°C']
     df["humidity"] = df['%RH']
+    df["water_content"] = df['g/m3']
     print(f"datafame: {df.head(5)}")
     return df
 
