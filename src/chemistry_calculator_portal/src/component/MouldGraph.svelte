@@ -15,7 +15,7 @@
     'Låg': {
       description: 'Under 60% RH: Idealisk för att förhindra alla former av mögeltillväxt.',
       risk: 'Låg',
-      baseRisk: 60,
+      baseRisk: 55,
       molds: 'De flesta mögelformer kan inte etablera sig under dessa torra förhållanden.'
     },
     'Måttlig': {
@@ -92,11 +92,11 @@
           data: {
             labels: temperatures,
             datasets: [{
-              label: 'Relative Humidity (%RH)',
+              label: 'Relativ fuktighet (%RH)',
               data: humidity.map((h, i) => ({ x: temperatures[i], y: h })),
               backgroundColor: 'blue'
             }, {
-              label: 'Mold Risk',
+              label: 'Mögelrisk',
               data: moldRisks.map((m, i) => ({ x: temperatures[i], y: m })),
               backgroundColor: 'red'
             }]
@@ -116,6 +116,14 @@
       }
     }
   }
+  const showMoldInfo = writable(false);
+
+  const moldInformation = {
+    Aspergillus: 'Ofta funnen på väggar, isolering och pappersprodukter. Kan växa vid lägre fuktighetsnivåer men trivs vid högre fuktighet.',
+    Cladosporium: 'Typiskt funnen på tyger och träytor, kan växa i både svala och varma förhållanden.',
+    Penicillium: 'Vanligt förekommande i mattor, tapeter och isolering, föredrar måttliga till höga fuktighetsnivåer.',
+    Stachybotrys: 'Känd som "svartmögel", ofta funnen på vattenskadade byggnadsmaterial och kräver konstant hög fuktighet för att växa.'
+  };
 </script>
 
 <div class="container">
@@ -134,7 +142,7 @@
         <div class="mb-4">
             <button class="btn btn-outline-primary" on:click={fetchMoldData}>Hämta mögeldata</button>
     <input type="range" min="10" max="90" value={$riskFactor} on:input={(e) => riskFactor.set(+e.target.value)}>
-    <div class="lead">Riskfaktor: {$riskFactor}</div>
+    <div class="lead">%RH: {$riskFactor}</div>
           </div>
         </div>
       <div class="col-6">
@@ -148,5 +156,17 @@
       </div>
 
     <canvas bind:this={chartContainer}></canvas>
+      <button class="btn btn-outline-primary" on:click={() => showMoldInfo.set(! $showMoldInfo)}>Om mögel</button>
+
+{#if $showMoldInfo}
+  <div>
+      <!--    <h3>Information om Mögel</h3>-->
+    <div class="form-text"><strong>Aspergillus:</strong> {moldInformation.Aspergillus}</div>
+    <div class="form-text"><strong>Cladosporium:</strong> {moldInformation.Cladosporium}</div>
+    <div class="form-text"><strong>Penicillium:</strong>{moldInformation.Penicillium}</div>
+    <div class="form-text"><strong>Stachybotrys:</strong>{moldInformation.Stachybotrys}</div>
+  </div>
+{/if}
+
   </div>
 </div>

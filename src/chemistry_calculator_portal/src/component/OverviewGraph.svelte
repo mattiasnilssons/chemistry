@@ -4,8 +4,7 @@
   import annotationPlugin from 'chartjs-plugin-annotation';
   import 'chartjs-adapter-date-fns';
 
-  const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/";
-      // "https://chemistry-xopabutmga-ez.a.run.app/";
+  const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/"; // "https://chemistry-xopabutmga-ez.a.run.app/";
   Chart.register(annotationPlugin);
 
   let chart;
@@ -87,7 +86,7 @@
         data: {
           labels: dates,
           datasets: [{
-            label: 'Temperature (°C)',
+            label: 'Temperatur (°C)',
             data: temperatures,
             borderColor: 'blue'
           }, {
@@ -134,7 +133,7 @@
     <div class="row">
       <div class="col-2">
     <button class="btn btn-outline-primary" on:click={fetchMoldData}>Hämta klimatdata</button>
-    <button class="btn btn-outline-primary" on:click={toggleAnnotations}>Göm annoteringar</button>
+    <button class="btn btn-outline-primary" on:click={toggleAnnotations}>Göm/Visa annoteringar</button>
     <ul>
       {#each events as event, index}
         <div class="form-text"><li class:selected={index === $selectedEventIndex} on:click={() => selectEvent(index)}>{event.description}</li></div>
