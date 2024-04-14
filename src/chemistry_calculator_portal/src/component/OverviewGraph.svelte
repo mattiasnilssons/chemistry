@@ -4,7 +4,7 @@
   import annotationPlugin from 'chartjs-plugin-annotation';
   import 'chartjs-adapter-date-fns';
 
-  const apiUrl = import.meta.env.VITE_BACKEND_HOST;
+  const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/";
   Chart.register(annotationPlugin);
 
   let chart;
