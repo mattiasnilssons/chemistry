@@ -24,8 +24,11 @@ router = APIRouter()
 
 @router.post("/calculate-mould")
 async def calculate_mould():
-    results = get_mould_data()
-    return results
+    try:
+        results = get_mould_data()
+        return results
+    except Exception as e:
+        return {"error": str(e)}
 
 app.include_router(router)
 if __name__ == "__main__":

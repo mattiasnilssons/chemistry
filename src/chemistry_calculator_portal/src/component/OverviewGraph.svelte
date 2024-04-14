@@ -4,8 +4,7 @@
   import annotationPlugin from 'chartjs-plugin-annotation';
   import 'chartjs-adapter-date-fns';
 
-  // const apiUrl = import.meta.env.VITE_BACKEND_HOST;
-  const apiUrl = "http://0.0.0.0:8080";
+  const apiUrl = import.meta.env.VITE_BACKEND_HOST;
   Chart.register(annotationPlugin);
 
   let chart;

@@ -7,8 +7,7 @@
   let chartContainer;
   let climateData = writable({});
   let riskFactor = writable(75); // Default value for the slider
-  // const apiUrl = import.meta.env.VITE_BACKEND_HOST;
-  const apiUrl = "http://0.0.0.0:8080";
+  const apiUrl = import.meta.env.VITE_BACKEND_HOST;
   const humidityLevels = {
     'Låg': {
       description: 'Under 60% RH: Idealisk för att förhindra alla former av mögeltillväxt.',
