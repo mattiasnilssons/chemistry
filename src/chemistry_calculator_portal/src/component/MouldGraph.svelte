@@ -9,7 +9,7 @@
   let loading = writable(false);
   let error = writable('');
   let riskFactor = writable(75); // Default value for the slider
-  const apiUrl = import.meta.env.VITE_BACKEND_HOST; // e.g., "https://chemistry-xopabutmga-ez.a.run.app/";
+  const apiUrl = "https://chemistry-xopabutmga-ez.a.run.app/"; // e.g., "https://chemistry-xopabutmga-ez.a.run.app/";
 
   const humidityLevels = {
     'Låg': {
