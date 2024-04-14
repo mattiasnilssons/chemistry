@@ -1,30 +1,29 @@
 <script>
   import Chart from 'chart.js/auto';
   import { writable, get } from "svelte/store";
-  import annotationPlugin from 'chartjs-plugin-annotation'; // Ensure you've installed this
-  import 'chartjs-adapter-date-fns'; // Import the adapter
-
-  Chart.register(annotationPlugin); // Register the annotation plugin globally
+  import annotationPlugin from 'chartjs-plugin-annotation';
+  import 'chartjs-adapter-date-fns';
+  const apiUrl = import.meta.env.VITE_BACKEND_HOST;
+  Chart.register(annotationPlugin);
 
   let chart;
   let chartContainer;
   let climateData = writable({});
 
+  // Define the events for annotations
   const events = [
     { time: '2024-03-26T12:00', description: 'I klassrummet (labbsalen) ligger på bänken' },
     { time: '2024-03-26T19:00', description: 'Transport (i väska)' },
-    // Add all other events following the same format
     { time: '2024-04-11T09:55', description: 'Ställd i klassrummet' }
   ];
 
   async function fetchMoldData() {
-    const response = await fetch('http://localhost:8080/calculate-mould', {
+    const response = await fetch(`${apiUrl}/calculate-mould`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
     if (response.ok) {
       const data = await response.json();
-      console.log("Data",data)
       climateData.set(data);
       updateChart();
     } else {
@@ -32,25 +31,18 @@
     }
   }
 
-  function calculateMoldRisk(RH, temperature) {
-    return 20 + RH + 0.5 * temperature; // Simplified example formula
-  }
-
   function updateChart() {
     const data = get(climateData);
+    console.log("Data",data)
     if (!data || !data.temperatures || !data.humidity) {
       console.error('Invalid or no data available');
       return;
     }
 
-    // Ensure dates are properly converted and formatted
     const dates = Object.keys(data.temperatures).map(date => new Date(date));
-    const temperatures = Object.values(data.temperatures).map(temp => temp || 0);  // Fallback for undefined values
-    const humidity = Object.values(data.humidity).map(hum => hum || 0);  // Fallback for undefined values
+    const temperatures = Object.values(data.temperatures);
+    const humidity = Object.values(data.humidity);
 
-    const moldRisks = humidity.map((rh, index) => calculateMoldRisk(rh, temperatures[index]));
-
-    // Adjust event annotations and ensure valid date formatting
     const eventAnnotations = events.map(event => ({
       type: 'line',
       mode: 'vertical',
@@ -69,11 +61,10 @@
     if (chart) {
       chart.data.labels = dates;
       chart.data.datasets[0].data = temperatures;
-      chart.data.datasets[1].data = moldRisks;
+      chart.data.datasets[1].data = humidity;
       chart.options.plugins.annotation.annotations = eventAnnotations;
       chart.update();
     } else {
-      Chart.register(annotationPlugin);
       chart = new Chart(chartContainer, {
         type: 'line',
         data: {
@@ -83,8 +74,8 @@
             data: temperatures,
             borderColor: 'blue'
           }, {
-            label: 'Mold Risk',
-            data: moldRisks,
+            label: 'Relativ fuktighet (%RH)',
+            data: humidity,
             borderColor: 'red'
           }]
         },
@@ -93,7 +84,7 @@
             x: {
               type: 'time',
               time: {
-                parser: date => new Date(date),  // Use a custom parser to handle date conversion
+                parser: 'yyyy-MM-ddTHH:mm', // Ensure this matches your date input format
                 tooltipFormat: 'yyyy-MM-dd HH:mm',
                 unit: 'day'
               },
@@ -111,8 +102,7 @@
         }
       });
     }
-}
-
+  }
 </script>
 
 <div class="container">

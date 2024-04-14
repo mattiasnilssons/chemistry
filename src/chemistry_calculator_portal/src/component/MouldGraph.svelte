@@ -7,7 +7,7 @@
   let chartContainer;
   let climateData = writable({});
   let riskFactor = writable(75); // Default value for the slider
-
+  const apiUrl = import.meta.env.VITE_BACKEND_HOST;
   const humidityLevels = {
     'Låg': {
       description: 'Under 60% RH: Idealisk för att förhindra alla former av mögeltillväxt.',
@@ -44,7 +44,7 @@
   }
 
   async function fetchMoldData() {
-    const response = await fetch('http://localhost:8080/calculate-mould', {
+    const response = await fetch(`${apiUrl}/calculate-mould`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     });
